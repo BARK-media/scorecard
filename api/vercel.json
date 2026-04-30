@@ -1,0 +1,7 @@
+{
+  "functions": {
+    "api/scorecard.js": {
+      "maxDuration": 10
+    }
+  }
+}
