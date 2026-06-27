@@ -125,74 +125,68 @@ function buildProspectEmail(payload) {
 
     const tierData = {
         beSeen: {
-            tierName: "Let's Get You Seen!",
-            tagline: "You're ready to start showing up online—we've got the blueprint.",
+            tierName: 'BE SEEN',
+            tagline: "The right customers can't find you yet. That's the first thing we fix.",
             headerColor: 'linear-gradient(135deg, #ec4899, #db2777)',
             keyGaps: [
-                'Inactive or incomplete Google Business Profile',
-                'No regular organic content',
-                'No ad strategy in place',
-                'Unclear brand messaging'
+                'Google Business Profile is inactive, incomplete, or missing',
+                'No consistent content — search engines and AI tools have nothing to work with',
+                'No ad strategy in place to reach customers who are ready to hire',
+                "Brand messaging isn't clear enough to build trust on first contact"
             ],
             quickWins: [
-                'Fully claim and optimize your Google Business Profile',
-                'Post 2–3 times per week on Facebook & Instagram',
-                "Stay consistent — don't overcomplicate it"
+                'Claim and fully optimize your Google Business Profile',
+                'Post consistently — 2 to 3 times a week is enough to start',
+                'Make sure your name, address, and phone match everywhere they appear online'
             ],
             differentiator: [
-                "Get visible in AI search (ChatGPT, Perplexity, Google AI Overviews) where most agencies aren't even looking",
-                'Track your local visibility, calls, and rankings in a live dashboard'
-            ],
-            ctaTitle: 'Ready for support?',
-            ctaText: 'Our BE SEEN package helps you get visible, fast — without the overwhelm.'
+                "Show up in AI search — ChatGPT, Perplexity, and Google AI Overviews — where most agencies aren't even looking yet",
+                'See your local visibility, calls, and rankings in a live dashboard updated daily'
+            ]
         },
         getLeads: {
-            tierName: "Let's Get You Leads!",
-            tagline: "Your foundation is set — now let's turn that into consistent growth.",
+            tierName: 'GET LEADS',
+            tagline: "You're showing up. Now let's make sure the right customers are choosing you.",
             headerColor: 'linear-gradient(135deg, #2563eb, #1e40af)',
             whatWeSee: [
-                'Some social content, but not yet driving results',
-                'Google Business Profile needs strategy',
-                'Ads are running, but ROI is unclear',
-                'Brand exists, but lacks standout identity'
+                "Some online presence, but it's not consistently driving new work",
+                "Google Business Profile exists but isn't working as hard as it should",
+                "Ads may be running, but it's unclear what's actually producing jobs",
+                "Brand looks okay — but doesn't stand out from the competition"
             ],
             nextSteps: [
-                'Launch Google LSA or Google Ads with clear targeting',
-                'Add retargeting to stay top-of-mind',
-                'Use Reels, TikTok, or Shorts to drive engagement',
-                "Set up proper tracking to see what's actually working"
+                'Launch Google Local Service Ads or Google Search Ads with clear local targeting',
+                "Build in retargeting so your business stays in front of people who looked but didn't call",
+                'Create short-form video content that keeps you visible between searches',
+                'Set up call tracking so you know exactly which channels are producing booked work'
             ],
             differentiator: [
-                'Show up in AI search results (ChatGPT, Perplexity, Google AI Overviews) — not just traditional Google',
-                'See every call, lead, and ad dollar in a live dashboard updated daily',
-                'Get full call tracking and recording across every channel'
-            ],
-            ctaTitle: 'Ready to grow?',
-            ctaText: "Our GET LEADS package is designed to do exactly that. We'll guide you through it — no pressure."
+                'Show up in AI search — ChatGPT, Perplexity, and Google AI Overviews — not just traditional Google',
+                'Every call, lead, and ad dollar tracked in a live dashboard updated daily',
+                'Full call tracking and recording across every channel so nothing slips through'
+            ]
         },
         dominate: {
-            tierName: 'Dominate Your Market!',
-            tagline: "You've built momentum — now it's time to take over locally.",
+            tierName: 'DOMINATE LOCALLY',
+            tagline: "You've built something real. Now let's make your business the obvious choice in your market.",
             headerColor: 'linear-gradient(135deg, #171717, #2a2a2a)',
             whatWeSee: [
-                'Solid digital presence, but growth has plateaued',
-                'Ads are live, but not fully optimized for local wins',
-                'Brand is known, but not fully set apart',
-                'Few systems in place to scale efficiently'
+                'Solid presence, but growth has leveled off',
+                'Ads are live, but not fully optimized for local dominance',
+                'Brand is recognized — but not yet the first name people think of',
+                "Marketing is working, but it's not compounding the way it should"
             ],
             nextSteps: [
-                'Create searchable content with high-impact, scroll-stopping videos and SEO-rich posts',
-                'Run advanced retargeting on Google & Facebook',
-                'Incorporate UGC and customer stories for trust',
-                'Set up an automated review system to boost social proof'
+                'Create content that makes you the go-to authority in your service area',
+                'Run advanced retargeting on Google and social so your name stays in front of the right people',
+                'Build in a review system that turns happy customers into your best marketing',
+                'Add customer stories and real job content that earns trust before anyone calls'
             ],
             differentiator: [
-                'Own AI search visibility (ChatGPT, Perplexity, Google AI Overviews) before competitors catch on',
-                'Live performance dashboard — every channel, every call, every dollar in one place',
-                'Full call tracking, recording, and attribution across digital and offline media'
-            ],
-            ctaTitle: 'Want to dominate your market?',
-            ctaText: "Our DOMINATE LOCALLY package is built to scale aggressively. Book a free growth call — we'll show you how."
+                "Own AI search visibility — ChatGPT, Perplexity, Google AI Overviews — before your competitors figure out it matters",
+                'Every channel, every call, every dollar in one live dashboard',
+                'Full call tracking, recording, and attribution so you know exactly what\'s working'
+            ]
         }
     };
 
@@ -261,10 +255,11 @@ function buildProspectEmail(payload) {
         <div style="padding: 28px 32px;">
             ${sectionsHtml}
 
-            <div style="background: #171717; color: white; padding: 28px; border-radius: 12px; text-align: center; margin-top: 20px;">
-                <h3 style="font-size: 18px; font-weight: 700; margin: 0 0 10px; color: white;">${escapeHtml(data.ctaTitle)}</h3>
-                <p style="opacity: 0.9; margin: 0 0 20px; font-size: 15px; line-height: 1.5;">${escapeHtml(data.ctaText)}</p>
-                <a href="${escapeHtml(calendlyUrl)}" style="display: inline-block; background: #ec4899; color: white; padding: 14px 32px; border-radius: 50px; text-decoration: none; font-weight: 600; font-size: 15px;">Schedule a Free Call →</a>
+            <div style="background: #171717; color: white; padding: 32px; border-radius: 12px; text-align: center; margin-top: 20px;">
+                <h3 style="font-size: 20px; font-weight: 700; margin: 0 0 14px; color: white;">Want to Improve Your Score?</h3>
+                <p style="opacity: 0.9; margin: 0 0 12px; font-size: 15px; line-height: 1.65;">Every Local Visibility Scorecard is personally reviewed by a real business owner — not just software.</p>
+                <p style="opacity: 0.85; margin: 0 0 24px; font-size: 15px; line-height: 1.65;">If you'd like help understanding your results, or want to know which improvements would have the biggest impact on your business, we're happy to walk through it with you. No pressure. No pitch. Just a real conversation about your business.</p>
+                <a href="${escapeHtml(calendlyUrl)}" style="display: inline-block; background: #ec4899; color: white; padding: 14px 32px; border-radius: 50px; text-decoration: none; font-weight: 600; font-size: 15px;">Schedule Your Free Scorecard Review →</a>
             </div>
 
             <div style="margin-top: 28px; padding-top: 24px; border-top: 1px solid #e5e5e5; font-size: 14px; color: #6b7280; line-height: 1.6;">
