@@ -120,7 +120,7 @@ function buildNotificationEmail(payload) {
 }
 
 function buildProspectEmail(payload) {
-    const { contact, score, tier } = payload;
+    const { contact, score, tier, resendNote } = payload;
     const calendlyUrl = process.env.CALENDLY_URL || 'https://barkmediasolutions.com/intro';
 
     const tierData = {
@@ -193,6 +193,13 @@ function buildProspectEmail(payload) {
     const data = tierData[tier];
     const firstName = contact.name.split(' ')[0];
 
+    // Optional note banner shown at the very top — used when manually re-sending
+    // results that may not have reached the recipient the first time.
+    const resendBanner = resendNote ? `
+            <div style="margin: 0 0 24px; padding: 16px 18px; background: #fff7ed; border: 1px solid #fed7aa; border-radius: 10px; font-size: 15px; color: #9a3412; line-height: 1.6;">
+                ${escapeHtml(typeof resendNote === 'string' ? resendNote : "A quick note before your results: we originally sent this scorecard earlier, but it looks like it didn't reach you. We wanted to make sure you got it, so here it is again — sorry for any confusion!")}
+            </div>` : '';
+
     const renderList = (items) => items.map(item => `
         <li style="padding: 8px 0 8px 28px; position: relative; font-size: 15px; line-height: 1.55; color: #374151;">
             <span style="position: absolute; left: 0; color: #2563eb; font-weight: 700;">→</span>
@@ -241,6 +248,7 @@ function buildProspectEmail(payload) {
 <body style="margin:0; padding:0; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: #f5f5f5;">
     <div style="max-width: 640px; margin: 0 auto; background: white;">
         <div style="padding: 32px 32px 0;">
+            ${resendBanner}
             <p style="font-size: 16px; color: #171717; margin: 0 0 24px;">Hi ${escapeHtml(firstName)},</p>
             <p style="font-size: 16px; color: #374151; margin: 0 0 24px; line-height: 1.6;">Thanks for taking the Local Visibility Scorecard. Here's where you stand and what we'd recommend next.</p>
         </div>
