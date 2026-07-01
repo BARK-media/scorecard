@@ -138,7 +138,9 @@ function buildConfirmationEmail(data) {
             <p style="font-size: 16px; color: #171717; margin: 0 0 20px;">Hi ${escapeHtml(firstName)},</p>
             <p style="font-size: 16px; color: #374151; margin: 0 0 20px; line-height: 1.65;">Thanks for getting in touch with BARKmedia. We've received your message and one of us — Jared or Angela — will get back to you within one business day.</p>
             <p style="font-size: 16px; color: #374151; margin: 0 0 20px; line-height: 1.65;">If it's easier to just grab a time to talk, you can book a call here:</p>
-            <p style="margin: 0 0 28px;"><a href="https://calendly.com/barkmediasolutions/discovery" style="display: inline-block; background: #ec4899; color: white; padding: 14px 32px; border-radius: 50px; text-decoration: none; font-weight: 600; font-size: 15px;">Book a Call &rarr;</a></p>
+            <p style="margin: 0 0 20px;"><a href="https://calendly.com/barkmediasolutions/discovery" style="display: inline-block; background: #ec4899; color: white; padding: 14px 32px; border-radius: 50px; text-decoration: none; font-weight: 600; font-size: 15px;">Book a Call &rarr;</a></p>
+            <p style="font-size: 16px; color: #374151; margin: 0 0 20px; line-height: 1.65;">Or see exactly where your business stands online &mdash; take our free Local Visibility Scorecard (about 2 minutes):</p>
+            <p style="margin: 0 0 28px;"><a href="https://barkmediasolutions.com/local-visibility-scorecard" style="display: inline-block; background: #ffffff; color: #2563eb; padding: 13px 30px; border: 2px solid #2563eb; border-radius: 50px; text-decoration: none; font-weight: 600; font-size: 15px;">Get Your Free Local Visibility Score &rarr;</a></p>
             <div style="padding-top: 24px; border-top: 1px solid #e5e5e5; font-size: 14px; color: #6b7280; line-height: 1.6;">
                 <p style="margin: 0 0 8px;">Talk soon,</p>
                 <p style="margin: 0;">&mdash; Jared &amp; Angela Barker, BARKmedia Solutions</p>
