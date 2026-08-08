@@ -1,5 +1,5 @@
 // ============================================================
-// BARKMEDIA LOCAL VISIBILITY SCORECARD — VERCEL API
+// BARKMEDIA LOCAL VISIBILITY SCORECARD: VERCEL API
 // ============================================================
 // File path in your Vercel repo: /api/scorecard.js
 //
@@ -58,22 +58,33 @@ function escapeHtml(str) {
         .replace(/'/g, '&#039;');
 }
 
+// One short paragraph per route. Selected by the payload's `route` value.
+// Wording is kept identical to the scorecard widget's routeCopy object so the
+// on-screen results and the emailed results always say the same thing.
+const routeParagraphs = {
+    'foundation-then-growth': 'A few fundamentals are working against you right now, and pouring advertising on top of them wastes money. We would fix the foundation first: the website, the Google listing, and tracking so you can see what is actually happening. Once that is solid, the Growth System takes over and goes after the next customer every week.',
+    'growth': 'Your fundamentals are in reasonable shape, which means the work is growth, not repair. That is what the Growth System does: get found by nearby customers, give them a reason to choose you, stay visible in the neighborhoods you want, and track which of it actually turns into booked jobs.',
+    'foundation-then-care': 'You are not short on work, so you do not need lead generation. What you do have is a few things online that are working against the reputation you have already built. We would fix those once, then keep your Google listing, reviews, and website current so the business always looks as good as it is.',
+    'care': 'Referrals are carrying you and the fundamentals are in decent shape, so aggressive lead generation would be selling you something you do not need. What makes sense here is keeping your online presence active and accurate so that when someone gets your name from a neighbor and looks you up, everything they find backs up what they heard.'
+};
+
 // ============================================================
 // EMAIL TEMPLATES
 // ============================================================
 
 function buildNotificationEmail(payload) {
-    const { contact, score, tier, answers, submittedAt } = payload;
-    const tierLabels = {
-        beSeen: 'BE SEEN (0–4)',
-        getLeads: 'GET LEADS (5–7)',
-        dominate: 'DOMINATE LOCALLY (8–10)'
-    };
+    const { contact, score, route, demand, capacity, answers, submittedAt } = payload;
 
-    const answerRows = Object.values(answers).map(a => `
+    const qualifyCell = (label, value) => `
+                <td width="33.33%" style="padding: 14px 12px; background: #fafafa; border: 1px solid #e5e5e5; border-radius: 8px; text-align: center; vertical-align: top;">
+                    <div style="font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: #6b7280; margin-bottom: 6px;">${escapeHtml(label)}</div>
+                    <div style="font-size: 15px; font-weight: 700; color: #171717; word-break: break-word;">${escapeHtml(value || 'n/a')}</div>
+                </td>`;
+
+    const answerRows = Object.values(answers || {}).map(a => `
         <tr>
             <td style="padding: 12px 16px; border-bottom: 1px solid #e5e5e5; vertical-align: top; font-size: 14px; color: #6b7280; width: 50%;">
-                ${escapeHtml(a.question)}
+                ${escapeHtml(a.question)}${a && a.scoring === false ? ' <span style="color:#9ca3af; font-size:12px;">(routing)</span>' : ''}
             </td>
             <td style="padding: 12px 16px; border-bottom: 1px solid #e5e5e5; vertical-align: top; font-size: 14px; color: #171717; font-weight: 500;">
                 ${escapeHtml(a.answer)}
@@ -87,11 +98,21 @@ function buildNotificationEmail(payload) {
 <head><meta charset="UTF-8"></head>
 <body style="margin:0; padding:0; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: #f5f5f5;">
     <div style="max-width: 640px; margin: 0 auto; background: white; padding: 32px;">
-        <div style="background: linear-gradient(135deg, #2563eb, #ec4899); color: white; padding: 28px; border-radius: 12px; text-align: center; margin-bottom: 24px;">
-            <div style="font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; opacity: 0.9; margin-bottom: 8px;">New Scorecard Submission</div>
-            <div style="font-size: 36px; font-weight: 800; line-height: 1;">${score} / 10</div>
-            <div style="font-size: 14px; opacity: 0.95; margin-top: 8px;">Tier: ${tierLabels[tier] || tier}</div>
-        </div>
+
+        <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="margin-bottom: 20px;">
+            <tr><td bgcolor="#171717" align="center" style="background-color: #171717; padding: 24px; border-radius: 12px;">
+                <div style="font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; color: #cbd5e1; margin-bottom: 8px;">New Scorecard Submission</div>
+                <div style="font-size: 36px; font-weight: 800; line-height: 1; color: #ffffff;">${escapeHtml(String(score))} / 10</div>
+            </td></tr>
+        </table>
+
+        <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="margin-bottom: 24px; border-collapse: separate; border-spacing: 8px 0;">
+            <tr>
+                ${qualifyCell('Route', route)}
+                ${qualifyCell('Demand', demand)}
+                ${qualifyCell('Capacity', capacity)}
+            </tr>
+        </table>
 
         <h2 style="margin: 0 0 16px; font-size: 18px; color: #171717;">Lead Info</h2>
         <table style="width: 100%; border-collapse: collapse; margin-bottom: 24px; background: #fafafa; border-radius: 8px; overflow: hidden;">
@@ -99,7 +120,7 @@ function buildNotificationEmail(payload) {
             <tr><td style="padding: 12px 16px; font-size: 14px; color: #6b7280;">Email</td><td style="padding: 12px 16px; font-size: 14px;"><a href="mailto:${escapeHtml(contact.email)}" style="color: #2563eb;">${escapeHtml(contact.email)}</a></td></tr>
             <tr><td style="padding: 12px 16px; font-size: 14px; color: #6b7280;">Company</td><td style="padding: 12px 16px; font-size: 14px; font-weight: 600;">${escapeHtml(contact.company)}</td></tr>
             ${contact.phone ? `<tr><td style="padding: 12px 16px; font-size: 14px; color: #6b7280;">Phone</td><td style="padding: 12px 16px; font-size: 14px;"><a href="tel:${escapeHtml(contact.phone)}" style="color: #2563eb;">${escapeHtml(contact.phone)}</a></td></tr>` : ''}
-            <tr><td style="padding: 12px 16px; font-size: 14px; color: #6b7280;">Submitted</td><td style="padding: 12px 16px; font-size: 14px;">${new Date(submittedAt).toLocaleString('en-US', { timeZone: 'America/Chicago' })} CT</td></tr>
+            ${submittedAt ? `<tr><td style="padding: 12px 16px; font-size: 14px; color: #6b7280;">Submitted</td><td style="padding: 12px 16px; font-size: 14px;">${escapeHtml(new Date(submittedAt).toLocaleString('en-US', { timeZone: 'America/Chicago' }))} CT</td></tr>` : ''}
         </table>
 
         <h2 style="margin: 24px 0 16px; font-size: 18px; color: #171717;">Their Answers</h2>
@@ -110,7 +131,7 @@ function buildNotificationEmail(payload) {
         <div style="margin-top: 28px; padding: 20px; background: #eff6ff; border-left: 4px solid #2563eb; border-radius: 8px;">
             <div style="font-size: 14px; color: #1e40af; font-weight: 600; margin-bottom: 8px;">Recommended next step:</div>
             <div style="font-size: 14px; color: #171717; line-height: 1.6;">
-                Reach out within 24 hours. Reference their score and the gaps in their answers — don't pitch generically.
+                Reach out within one business day. Reference their score and the specific gaps in their answers, and skip the generic pitch.
             </div>
         </div>
     </div>
@@ -120,126 +141,58 @@ function buildNotificationEmail(payload) {
 }
 
 function buildProspectEmail(payload) {
-    const { contact, score, tier, resendNote } = payload;
+    const { contact, score, route, resendNote } = payload;
+    const strengths = Array.isArray(payload.strengths) ? payload.strengths : [];
+    const gaps = Array.isArray(payload.gaps) ? payload.gaps : [];
+    const fixes = Array.isArray(payload.fixes) ? payload.fixes : [];
     const calendlyUrl = process.env.CALENDLY_URL || 'https://barkmediasolutions.com/intro';
-
-    const tierData = {
-        beSeen: {
-            tierName: 'BE SEEN',
-            tagline: "The right customers can't find you yet. That's the first thing we fix.",
-            headerColor: 'linear-gradient(135deg, #ec4899, #db2777)',
-            keyGaps: [
-                'Google Business Profile is inactive, incomplete, or missing',
-                'No consistent content — search engines and AI tools have nothing to work with',
-                'No ad strategy in place to reach customers who are ready to hire',
-                "Brand messaging isn't clear enough to build trust on first contact"
-            ],
-            quickWins: [
-                'Claim and fully optimize your Google Business Profile',
-                'Post consistently — 2 to 3 times a week is enough to start',
-                'Make sure your name, address, and phone match everywhere they appear online'
-            ],
-            differentiator: [
-                "Show up in AI search — ChatGPT, Perplexity, and Google AI Overviews — where most agencies aren't even looking yet",
-                'See your local visibility, calls, and rankings in a live dashboard updated daily'
-            ]
-        },
-        getLeads: {
-            tierName: 'GET LEADS',
-            tagline: "You're showing up. Now let's make sure the right customers are choosing you.",
-            headerColor: 'linear-gradient(135deg, #2563eb, #1e40af)',
-            whatWeSee: [
-                "Some online presence, but it's not consistently driving new work",
-                "Google Business Profile exists but isn't working as hard as it should",
-                "Ads may be running, but it's unclear what's actually producing jobs",
-                "Brand looks okay — but doesn't stand out from the competition"
-            ],
-            nextSteps: [
-                'Launch Google Local Service Ads or Google Search Ads with clear local targeting',
-                "Build in retargeting so your business stays in front of people who looked but didn't call",
-                'Create short-form video content that keeps you visible between searches',
-                'Set up call tracking so you know exactly which channels are producing booked work'
-            ],
-            differentiator: [
-                'Show up in AI search — ChatGPT, Perplexity, and Google AI Overviews — not just traditional Google',
-                'Every call, lead, and ad dollar tracked in a live dashboard updated daily',
-                'Full call tracking and recording across every channel so nothing slips through'
-            ]
-        },
-        dominate: {
-            tierName: 'DOMINATE LOCALLY',
-            tagline: "You've built something real. Now let's make your business the obvious choice in your market.",
-            headerColor: 'linear-gradient(135deg, #171717, #2a2a2a)',
-            whatWeSee: [
-                'Solid presence, but growth has leveled off',
-                'Ads are live, but not fully optimized for local dominance',
-                'Brand is recognized — but not yet the first name people think of',
-                "Marketing is working, but it's not compounding the way it should"
-            ],
-            nextSteps: [
-                'Create content that makes you the go-to authority in your service area',
-                'Run advanced retargeting on Google and social so your name stays in front of the right people',
-                'Build in a review system that turns happy customers into your best marketing',
-                'Add customer stories and real job content that earns trust before anyone calls'
-            ],
-            differentiator: [
-                "Own AI search visibility — ChatGPT, Perplexity, Google AI Overviews — before your competitors figure out it matters",
-                'Every channel, every call, every dollar in one live dashboard',
-                'Full call tracking, recording, and attribution so you know exactly what\'s working'
-            ]
-        }
-    };
-
-    const data = tierData[tier];
     const firstName = contact.name.split(' ')[0];
 
-    // Optional note banner shown at the very top — used when manually re-sending
+    // Optional note banner shown at the very top. Used when manually re-sending
     // results that may not have reached the recipient the first time.
     const resendBanner = resendNote ? `
             <div style="margin: 0 0 24px; padding: 16px 18px; background: #fff7ed; border: 1px solid #fed7aa; border-radius: 10px; font-size: 15px; color: #9a3412; line-height: 1.6;">
-                ${escapeHtml(typeof resendNote === 'string' ? resendNote : "A quick note before your results: we originally sent this scorecard earlier, but it looks like it didn't reach you. We wanted to make sure you got it, so here it is again — sorry for any confusion!")}
+                ${escapeHtml(typeof resendNote === 'string' ? resendNote : "A quick note before your results: we originally sent this scorecard earlier, but it looks like it did not reach you. We wanted to make sure you got it, so here it is again.")}
             </div>` : '';
 
-    const renderList = (items) => items.map(item => `
-        <li style="padding: 8px 0 8px 28px; position: relative; font-size: 15px; line-height: 1.55; color: #374151;">
-            <span style="position: absolute; left: 0; color: #2563eb; font-weight: 700;">→</span>
-            ${escapeHtml(item)}
-        </li>
-    `).join('');
+    const bulletList = (items) => `<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0">${items.map(item => `
+                <tr><td style="padding: 6px 0; font-size: 15px; line-height: 1.55; color: #374151;"><span style="color: #2563eb; font-weight: 700;">&rarr;</span>&nbsp;&nbsp;${escapeHtml(item)}</td></tr>`).join('')}
+            </table>`;
 
-    let sectionsHtml = '';
+    const numberedList = (items) => `<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0">${items.map((item, i) => `
+                <tr>
+                    <td valign="top" style="padding: 6px 0; font-size: 15px; line-height: 1.55; color: #2563eb; font-weight: 700; width: 26px;">${i + 1}.</td>
+                    <td valign="top" style="padding: 6px 0; font-size: 15px; line-height: 1.55; color: #374151;">${escapeHtml(item)}</td>
+                </tr>`).join('')}
+            </table>`;
 
-    if (tier === 'beSeen') {
-        sectionsHtml = `
-            <div style="background: #fafafa; border-radius: 12px; padding: 24px; margin-bottom: 16px;">
-                <h3 style="margin: 0 0 14px; font-size: 16px; font-weight: 700; color: #171717;">Key Gaps</h3>
-                <ul style="list-style: none; padding: 0; margin: 0;">${renderList(data.keyGaps)}</ul>
-            </div>
-            <div style="background: #fafafa; border-radius: 12px; padding: 24px; margin-bottom: 16px;">
-                <h3 style="margin: 0 0 14px; font-size: 16px; font-weight: 700; color: #171717;">Quick Wins</h3>
-                <ul style="list-style: none; padding: 0; margin: 0;">${renderList(data.quickWins)}</ul>
-            </div>
-            <div style="background: linear-gradient(135deg, #eff6ff, #fef3f8); border-radius: 12px; padding: 24px; margin-bottom: 16px; border: 1px solid #dbeafe;">
-                <h3 style="margin: 0 0 14px; font-size: 16px; font-weight: 700; color: #1e40af;">What BARKmedia Brings</h3>
-                <ul style="list-style: none; padding: 0; margin: 0;">${renderList(data.differentiator)}</ul>
-            </div>
-        `;
-    } else {
-        sectionsHtml = `
-            <div style="background: #fafafa; border-radius: 12px; padding: 24px; margin-bottom: 16px;">
-                <h3 style="margin: 0 0 14px; font-size: 16px; font-weight: 700; color: #171717;">What We're Seeing</h3>
-                <ul style="list-style: none; padding: 0; margin: 0;">${renderList(data.whatWeSee)}</ul>
-            </div>
-            <div style="background: #fafafa; border-radius: 12px; padding: 24px; margin-bottom: 16px;">
-                <h3 style="margin: 0 0 14px; font-size: 16px; font-weight: 700; color: #171717;">Smart Next Steps</h3>
-                <ul style="list-style: none; padding: 0; margin: 0;">${renderList(data.nextSteps)}</ul>
-            </div>
-            <div style="background: linear-gradient(135deg, #eff6ff, #fef3f8); border-radius: 12px; padding: 24px; margin-bottom: 16px; border: 1px solid #dbeafe;">
-                <h3 style="margin: 0 0 14px; font-size: 16px; font-weight: 700; color: #1e40af;">What BARKmedia Brings</h3>
-                <ul style="list-style: none; padding: 0; margin: 0;">${renderList(data.differentiator)}</ul>
-            </div>
-        `;
-    }
+    const card = (bg, border, titleColor, title, inner) => `
+            <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="margin-bottom: 16px;">
+                <tr><td bgcolor="${bg}" style="background-color: ${bg}; border: 1px solid ${border}; border-radius: 12px; padding: 24px;">
+                    <div style="margin: 0 0 14px; font-size: 16px; font-weight: 700; color: ${titleColor};">${title}</div>
+                    ${inner}
+                </td></tr>
+            </table>`;
+
+    const strengthsSection = strengths.length
+        ? card('#f0fdf4', '#bbf7d0', '#166534', 'What is already working', bulletList(strengths))
+        : '';
+
+    const gapsSection = gaps.length
+        ? card('#fef2f2', '#fecaca', '#991b1b', 'What is costing you customers', bulletList(gaps))
+        : '';
+
+    const fixesSection = fixes.length
+        ? card('#fffbeb', '#fde68a', '#92400e', 'Do these first. They are free.',
+            numberedList(fixes) +
+            '<div style="margin-top: 14px; font-size: 14px; color: #6b7280; line-height: 1.6;">These are worth doing whether or not you ever work with us.</div>')
+        : '';
+
+    const routeParagraph = routeParagraphs[route] || '';
+    const routeSection = routeParagraph
+        ? card('#eff6ff', '#dbeafe', '#1e40af', 'Where we would start with you',
+            `<div style="font-size: 15px; line-height: 1.65; color: #374151;">${escapeHtml(routeParagraph)}</div>`)
+        : '';
 
     return `
 <!DOCTYPE html>
@@ -250,29 +203,34 @@ function buildProspectEmail(payload) {
         <div style="padding: 32px 32px 0;">
             ${resendBanner}
             <p style="font-size: 16px; color: #171717; margin: 0 0 24px;">Hi ${escapeHtml(firstName)},</p>
-            <p style="font-size: 16px; color: #374151; margin: 0 0 24px; line-height: 1.6;">Thanks for taking the Local Visibility Scorecard. Here's where you stand and what we'd recommend next.</p>
+            <p style="font-size: 16px; color: #374151; margin: 0 0 24px; line-height: 1.6;">Thanks for taking the Local Visibility Scorecard. Here is what we found and where we would start.</p>
         </div>
 
-        <div style="background: ${data.headerColor}; color: white; padding: 36px 32px; text-align: center;">
-            <div style="font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; opacity: 0.9; margin-bottom: 8px;">Your Score</div>
-            <div style="font-size: 48px; font-weight: 800; line-height: 1; margin-bottom: 12px;">${score} / 10</div>
-            <h2 style="font-size: 24px; font-weight: 800; margin: 0 0 8px; letter-spacing: -0.01em;">${escapeHtml(data.tierName)}</h2>
-            <p style="font-size: 16px; opacity: 0.95; margin: 0; line-height: 1.5;">${escapeHtml(data.tagline)}</p>
-        </div>
+        <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0">
+            <tr><td bgcolor="#2563eb" align="center" style="background-color: #2563eb; padding: 36px 32px;">
+                <div style="font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; color: #cfe0fb; margin-bottom: 8px;">Your Score</div>
+                <div style="font-size: 48px; font-weight: 800; line-height: 1; color: #ffffff; margin-bottom: 8px;">${escapeHtml(String(score))} / 10</div>
+                <div style="font-size: 15px; color: #dbeafe; line-height: 1.5;">Here is where your business stands online today.</div>
+            </td></tr>
+        </table>
 
         <div style="padding: 28px 32px;">
-            ${sectionsHtml}
+            ${strengthsSection}
+            ${gapsSection}
+            ${fixesSection}
+            ${routeSection}
 
-            <div style="background: #171717; color: white; padding: 32px; border-radius: 12px; text-align: center; margin-top: 20px;">
-                <h3 style="font-size: 20px; font-weight: 700; margin: 0 0 14px; color: white;">Want to Improve Your Score?</h3>
-                <p style="opacity: 0.9; margin: 0 0 12px; font-size: 15px; line-height: 1.65;">Every Local Visibility Scorecard is personally reviewed by a real business owner — not just software.</p>
-                <p style="opacity: 0.85; margin: 0 0 24px; font-size: 15px; line-height: 1.65;">If you'd like help understanding your results, or want to know which improvements would have the biggest impact on your business, we're happy to walk through it with you. No pressure. No pitch. Just a real conversation about your business.</p>
-                <a href="${escapeHtml(calendlyUrl)}" style="display: inline-block; background: #ec4899; color: white; padding: 14px 32px; border-radius: 50px; text-decoration: none; font-weight: 600; font-size: 15px;">Schedule Your Free Scorecard Review →</a>
-            </div>
+            <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="margin-top: 20px;">
+                <tr><td bgcolor="#171717" align="center" style="background-color: #171717; padding: 32px; border-radius: 12px;">
+                    <div style="font-size: 18px; font-weight: 700; margin: 0 0 14px; color: #ffffff;">Want a closer look?</div>
+                    <div style="color: #e5e5e5; margin: 0 0 22px; font-size: 15px; line-height: 1.65;">A real business owner reviews every scorecard. If you want to talk through your results and which fixes matter most for your business, we are glad to help. No pressure and no sales pitch.</div>
+                    <a href="${escapeHtml(calendlyUrl)}" style="display: inline-block; background: #ec4899; color: #ffffff; padding: 14px 32px; border-radius: 50px; text-decoration: none; font-weight: 600; font-size: 15px;">Schedule Your Free Scorecard Review &rarr;</a>
+                </td></tr>
+            </table>
 
             <div style="margin-top: 28px; padding-top: 24px; border-top: 1px solid #e5e5e5; font-size: 14px; color: #6b7280; line-height: 1.6;">
-                <p style="margin: 0 0 8px;">Questions? Just reply to this email — it goes straight to us.</p>
-                <p style="margin: 0;">— Jared & Angela Barker, BARKmedia Solutions</p>
+                <p style="margin: 0 0 8px;">Questions? Just reply to this email. It goes straight to us.</p>
+                <p style="margin: 0;">Jared and Angela Barker, BARKmedia Solutions</p>
             </div>
         </div>
     </div>
@@ -312,7 +270,7 @@ export default async function handler(req, res) {
 
         const payload = req.body;
 
-        // Honeypot check — bots fill this, humans don't
+        // Honeypot check. Bots fill this, humans don't
         if (payload.honeypot && payload.honeypot.trim() !== '') {
             // Silently accept, don't send emails
             return res.status(200).json({ success: true });
@@ -328,8 +286,8 @@ export default async function handler(req, res) {
             return res.status(400).json({ error: 'Invalid email' });
         }
 
-        if (typeof payload.score !== 'number' || !payload.tier) {
-            return res.status(400).json({ error: 'Missing score or tier' });
+        if (typeof payload.score !== 'number') {
+            return res.status(400).json({ error: 'Missing score' });
         }
 
         const fromEmail = process.env.FROM_EMAIL || 'scorecard@barkmediasolutions.com';
@@ -340,7 +298,7 @@ export default async function handler(req, res) {
             from: `BARKmedia Scorecard <${fromEmail}>`,
             to: notifyEmail,
             replyTo: payload.contact.email,
-            subject: `New Scorecard: ${payload.contact.name} (${payload.contact.company}) — Score ${payload.score}/10`,
+            subject: `New Scorecard: ${payload.contact.name} (${payload.contact.company}), Score ${payload.score}/10`,
             html: buildNotificationEmail(payload)
         });
 
@@ -359,7 +317,7 @@ export default async function handler(req, res) {
             prospectPromise
         ]);
 
-        // Log any errors but don't fail the whole request — at least one email might have gone through
+        // Log any errors but don't fail the whole request. At least one email might have gone through
         if (notifyResult.status === 'rejected') {
             console.error('Notification email failed:', notifyResult.reason);
         }
