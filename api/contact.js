@@ -13,7 +13,8 @@
 //   FROM_EMAIL              - Verified sender (e.g. scorecard@barkmediasolutions.com)
 //
 // Optional:
-//   ALLOWED_ORIGIN          - For CORS (default: https://barkmediasolutions.com)
+//   ALLOWED_ORIGIN          - For CORS. One origin, or several separated by commas.
+//                             (default: https://barkmediasolutions.com)
 // ============================================================
 
 import { Resend } from 'resend';
@@ -156,10 +157,68 @@ function buildConfirmationEmail(data) {
 // MAIN HANDLER
 // ============================================================
 export default async function handler(req, res) {
-    const allowedOrigin = process.env.ALLOWED_ORIGIN || 'https://barkmediasolutions.com';
+    // CORS. ALLOWED_ORIGIN may name one origin or several, comma-separated.
+    // The header itself accepts exactly one value - a list is invalid per
+    // spec and browsers reject it - so the caller's own origin is echoed
+    // back when it is allowed. With a single-value ALLOWED_ORIGIN and no
+    // preview suffix this behaves exactly as it did before, which is why
+    // it is safe to deploy ahead of changing the variable.
+    const allowed = (process.env.ALLOWED_ORIGIN || 'https://barkmediasolutions.com')
+        .split(',')
+        .map((s) => s.trim())
+        .filter(Boolean);
 
-    // CORS
-    res.setHeader('Access-Control-Allow-Origin', allowedOrigin);
+    // TEMPORARY, FOR THE PRE-LAUNCH PREVIEW SITE. REMOVE AT CUTOVER.
+    //
+    // Cloudflare Pages gives every deploy its own alias under the project
+    // domain - abc1234.barkmedia-site.pages.dev - so an exact allowlist
+    // only ever matches whichever alias was pasted into the variable.
+    // Matching the suffix instead lets any deploy of the project submit.
+    //
+    // BE CLEAR ABOUT WHAT THIS BROADENS: it trusts EVERY deploy of the
+    // Pages project, not one reviewed build. That is acceptable only
+    // because the project is ours and the window is short. It is not a
+    // general-purpose wildcard - only Cloudflare can create a host under
+    // this suffix, and only for this project, so no third party can mint
+    // a matching origin.
+    //
+    // At DNS cutover: delete this constant and isPreviewOrigin, and trim
+    // ALLOWED_ORIGIN back to the live domain alone. The preview site stops
+    // needing to submit the moment it stops being the site.
+    const PREVIEW_HOST = 'barkmedia-site.pages.dev';
+
+    function isPreviewOrigin(origin) {
+        if (!origin) return false;
+        let url;
+        try {
+            url = new URL(origin);
+        } catch {
+            return false;
+        }
+        // The bare project host AND any deploy alias under it. Matching
+        // only '.' + PREVIEW_HOST would miss the bare host, which is the
+        // one the preview site actually runs on - caught in testing.
+        //
+        // Checked on the parsed hostname, and https only. A raw endsWith
+        // on the header string would be looser than it looks: it would
+        // accept barkmedia-site.pages.dev.evil.com, and a suffix sitting
+        // in a path rather than the host.
+        if (url.protocol !== 'https:') return false;
+        return url.hostname === PREVIEW_HOST || url.hostname.endsWith('.' + PREVIEW_HOST);
+    }
+
+    const requestOrigin = req.headers.origin;
+    const originAllowed = allowed.includes(requestOrigin) || isPreviewOrigin(requestOrigin);
+
+    res.setHeader(
+        'Access-Control-Allow-Origin',
+        originAllowed ? requestOrigin : allowed[0]
+    );
+
+    // Required once the value varies by caller. Without it a cache or proxy
+    // can serve one origin's header to another, which fails intermittently
+    // and is miserable to diagnose.
+    res.setHeader('Vary', 'Origin');
     res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
     res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
 
