@@ -97,12 +97,12 @@ function buildNotificationEmail(payload) {
 <!DOCTYPE html>
 <html>
 <head><meta charset="UTF-8"></head>
-<body style="margin:0; padding:0; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: #f5f5f5;">
+<body style="margin:0; padding:0; font-family: 'Familjen Grotesk', 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: #f5f5f5;">
     <div style="max-width: 640px; margin: 0 auto; background: white; padding: 32px;">
 
         <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="margin-bottom: 20px;">
             <tr><td bgcolor="#171717" align="center" style="background-color: #171717; padding: 24px; border-radius: 12px;">
-                <div style="font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; color: #cbd5e1; margin-bottom: 8px;">New Scorecard Submission</div>
+                <div style="font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; color: #d5d5d5; margin-bottom: 8px;">New Scorecard Submission</div>
                 <div style="font-size: 36px; font-weight: 800; line-height: 1; color: #ffffff;">${escapeHtml(String(score))} / 10</div>
             </td></tr>
         </table>
@@ -118,9 +118,9 @@ function buildNotificationEmail(payload) {
         <h2 style="margin: 0 0 16px; font-size: 18px; color: #171717;">Lead Info</h2>
         <table style="width: 100%; border-collapse: collapse; margin-bottom: 24px; background: #fafafa; border-radius: 8px; overflow: hidden;">
             <tr><td style="padding: 12px 16px; font-size: 14px; color: #6b7280; width: 30%;">Name</td><td style="padding: 12px 16px; font-size: 14px; font-weight: 600;">${escapeHtml(contact.name)}</td></tr>
-            <tr><td style="padding: 12px 16px; font-size: 14px; color: #6b7280;">Email</td><td style="padding: 12px 16px; font-size: 14px;"><a href="mailto:${escapeHtml(contact.email)}" style="color: #2563eb;">${escapeHtml(contact.email)}</a></td></tr>
+            <tr><td style="padding: 12px 16px; font-size: 14px; color: #6b7280;">Email</td><td style="padding: 12px 16px; font-size: 14px;"><a href="mailto:${escapeHtml(contact.email)}" style="color: #1268b4;">${escapeHtml(contact.email)}</a></td></tr>
             <tr><td style="padding: 12px 16px; font-size: 14px; color: #6b7280;">Company</td><td style="padding: 12px 16px; font-size: 14px; font-weight: 600;">${escapeHtml(contact.company)}</td></tr>
-            ${contact.phone ? `<tr><td style="padding: 12px 16px; font-size: 14px; color: #6b7280;">Phone</td><td style="padding: 12px 16px; font-size: 14px;"><a href="tel:${escapeHtml(contact.phone)}" style="color: #2563eb;">${escapeHtml(contact.phone)}</a></td></tr>` : ''}
+            ${contact.phone ? `<tr><td style="padding: 12px 16px; font-size: 14px; color: #6b7280;">Phone</td><td style="padding: 12px 16px; font-size: 14px;"><a href="tel:${escapeHtml(contact.phone)}" style="color: #1268b4;">${escapeHtml(contact.phone)}</a></td></tr>` : ''}
             ${submittedAt ? `<tr><td style="padding: 12px 16px; font-size: 14px; color: #6b7280;">Submitted</td><td style="padding: 12px 16px; font-size: 14px;">${escapeHtml(new Date(submittedAt).toLocaleString('en-US', { timeZone: 'America/Chicago' }))} CT</td></tr>` : ''}
         </table>
 
@@ -129,8 +129,8 @@ function buildNotificationEmail(payload) {
             ${answerRows}
         </table>
 
-        <div style="margin-top: 28px; padding: 20px; background: #eff6ff; border-left: 4px solid #2563eb; border-radius: 8px;">
-            <div style="font-size: 14px; color: #1e40af; font-weight: 600; margin-bottom: 8px;">Recommended next step:</div>
+        <div style="margin-top: 28px; padding: 20px; background: #e9f4fe; border-left: 4px solid #1268b4; border-radius: 8px;">
+            <div style="font-size: 14px; color: #1268b4; font-weight: 600; margin-bottom: 8px;">Recommended next step:</div>
             <div style="font-size: 14px; color: #171717; line-height: 1.6;">
                 Reach out within one business day. Reference their score and the specific gaps in their answers, and skip the generic pitch.
             </div>
@@ -157,12 +157,12 @@ function buildProspectEmail(payload) {
             </div>` : '';
 
     const bulletList = (items) => `<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0">${items.map(item => `
-                <tr><td style="padding: 6px 0; font-size: 15px; line-height: 1.55; color: #374151;"><span style="color: #2563eb; font-weight: 700;">&rarr;</span>&nbsp;&nbsp;${escapeHtml(item)}</td></tr>`).join('')}
+                <tr><td style="padding: 6px 0; font-size: 15px; line-height: 1.55; color: #374151;"><span style="color: #1268b4; font-weight: 700;">&rarr;</span>&nbsp;&nbsp;${escapeHtml(item)}</td></tr>`).join('')}
             </table>`;
 
     const numberedList = (items) => `<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0">${items.map((item, i) => `
                 <tr>
-                    <td valign="top" style="padding: 6px 0; font-size: 15px; line-height: 1.55; color: #2563eb; font-weight: 700; width: 26px;">${i + 1}.</td>
+                    <td valign="top" style="padding: 6px 0; font-size: 15px; line-height: 1.55; color: #1268b4; font-weight: 700; width: 26px;">${i + 1}.</td>
                     <td valign="top" style="padding: 6px 0; font-size: 15px; line-height: 1.55; color: #374151;">${escapeHtml(item)}</td>
                 </tr>`).join('')}
             </table>`;
@@ -176,22 +176,22 @@ function buildProspectEmail(payload) {
             </table>`;
 
     const strengthsSection = strengths.length
-        ? card('#f0fdf4', '#bbf7d0', '#166534', 'What is already working', bulletList(strengths))
+        ? card('#f1f7f5', '#cde3db', '#1a7f5a', 'What is already working', bulletList(strengths))
         : '';
 
     const gapsSection = gaps.length
-        ? card('#fef2f2', '#fecaca', '#991b1b', 'What is costing you customers', bulletList(gaps))
+        ? card('#faf3f2', '#eed2d0', '#b4342a', 'What is costing you customers', bulletList(gaps))
         : '';
 
     const fixesSection = fixes.length
-        ? card('#fffbeb', '#fde68a', '#92400e', 'Do these first. They are free.',
+        ? card('#e9f4fe', '#cbdeee', '#1268b4', 'Do these first. They are free.',
             numberedList(fixes) +
             '<div style="margin-top: 14px; font-size: 14px; color: #6b7280; line-height: 1.6;">These are worth doing whether or not you ever work with us.</div>')
         : '';
 
     const routeParagraph = routeParagraphs[route] || '';
     const routeSection = routeParagraph
-        ? card('#eff6ff', '#dbeafe', '#1e40af', 'Where we would start with you',
+        ? card('#f6f9fc', '#e3e9f0', '#171717', 'Where we would start with you',
             `<div style="font-size: 15px; line-height: 1.65; color: #374151;">${escapeHtml(routeParagraph)}</div>`)
         : '';
 
@@ -199,7 +199,7 @@ function buildProspectEmail(payload) {
 <!DOCTYPE html>
 <html>
 <head><meta charset="UTF-8"></head>
-<body style="margin:0; padding:0; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: #f5f5f5;">
+<body style="margin:0; padding:0; font-family: 'Familjen Grotesk', 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: #f5f5f5;">
     <div style="max-width: 640px; margin: 0 auto; background: white;">
         <div style="padding: 32px 32px 0;">
             ${resendBanner}
@@ -208,10 +208,14 @@ function buildProspectEmail(payload) {
         </div>
 
         <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0">
-            <tr><td bgcolor="#2563eb" align="center" style="background-color: #2563eb; padding: 36px 32px;">
-                <div style="font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; color: #cfe0fb; margin-bottom: 8px;">Your Score</div>
+            <tr><td bgcolor="#1e90f0" align="center" style="background-color: #1e90f0; padding: 36px 32px;">
+                <div style="font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; color: #ffffff; margin-bottom: 8px;">Your Score</div>
                 <div style="font-size: 48px; font-weight: 800; line-height: 1; color: #ffffff; margin-bottom: 8px;">${escapeHtml(String(score))} / 10</div>
-                <div style="font-size: 15px; color: #dbeafe; line-height: 1.5;">Here is where your business stands online today.</div>
+                <!-- 19px bold, not 15px: white on #1e90f0 is 3.33:1, which passes AA only
+                     for large text. Large means 14pt bold = 18.67px, so 18px bold would
+                     still be normal text and still fail. 19px bold is 14.2pt. The blue
+                     stays because it is the brand and it matches the site header. -->
+                <div style="font-size: 19px; font-weight: 700; color: #ffffff; line-height: 1.45;">Here is where your business stands online today.</div>
             </td></tr>
         </table>
 
